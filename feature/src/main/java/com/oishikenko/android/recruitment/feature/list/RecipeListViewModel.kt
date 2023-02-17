@@ -13,10 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeListViewModel @Inject constructor(
-    private var cookingRecordsRepository: CookingRecordsRepository
+    cookingRecordsRepository: CookingRecordsRepository
 ) : ViewModel() {
     val cookingRecords: StateFlow<List<CookingRecord>> =
-        cookingRecordsRepository.getCookingRecords(offet = 0, limit = 5).map {
+        cookingRecordsRepository.getCookingRecords(offet = 0, limit = 30).map {
             it.body()?.cookingRecords ?: emptyList<CookingRecord>()
         }.stateIn(
             scope = viewModelScope,
