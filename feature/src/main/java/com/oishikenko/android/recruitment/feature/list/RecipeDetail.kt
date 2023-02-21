@@ -2,7 +2,6 @@ package com.oishikenko.android.recruitment.feature.list
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -55,14 +54,10 @@ fun RecipeDetail(
                 modifier = Modifier
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 360.dp)
-                    .background(
-                        color = colorResource(id = R.color.recorded_at_text_color)
-                    )
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = colorResource(id = R.color.recorded_at_text_color)),
+                        .fillMaxWidth(),
                     model = cookingRecord.imageUrl,
                     contentScale = ContentScale.FillWidth,
                     contentDescription = "thumbnail"
