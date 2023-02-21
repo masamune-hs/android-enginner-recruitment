@@ -1,5 +1,6 @@
 package com.oishikenko.android.recruitment.data.repository
 
+import com.oishikenko.android.recruitment.data.model.CookingRecord
 import com.oishikenko.android.recruitment.data.model.CookingRecords
 import com.oishikenko.android.recruitment.data.network.CookingRecordsNetworkApi
 import kotlinx.coroutines.flow.Flow
@@ -13,4 +14,7 @@ class CookingRecordsRepositoryImpl @Inject constructor(
     override fun getCookingRecords(offet: Int, limit: Int): Flow<Response<CookingRecords>> = flow {
         emit(cookingRecordsNetworkApi.getCookingRecords(offset = offet, limit = limit))
     }
+
+    override suspend fun getPagingCookingRecords(offet: Int, limit: Int): Response<CookingRecords> =
+        cookingRecordsNetworkApi.getCookingRecords(offset = offet, limit = limit)
 }

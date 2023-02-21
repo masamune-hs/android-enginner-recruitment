@@ -6,4 +6,5 @@ import retrofit2.Response
 
 interface CookingRecordsRepository {
     fun getCookingRecords(offet: Int, limit: Int): Flow<Response<CookingRecords>>
+    suspend fun getPagingCookingRecords(offet: Int, limit: Int): Response<CookingRecords>
 }

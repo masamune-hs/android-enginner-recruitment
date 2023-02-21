@@ -25,6 +25,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.oishikenko.android.recruitment.data.model.CookingRecord
 import com.oishikenko.android.recruitment.feature.R
 
@@ -33,20 +35,23 @@ import com.oishikenko.android.recruitment.feature.R
 fun RecipeListScreen(
     viewModel: RecipeListViewModel = hiltViewModel()
 ) {
-    val cookingRecords by viewModel.cookingRecords.collectAsStateWithLifecycle()
+//    val cookingRecords by viewModel.cookingRecords.collectAsStateWithLifecycle()
+    val lazyPagingItems = viewModel.cookingRecords.collectAsLazyPagingItems()
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "recipeList") {
         composable("recipeList") {
-            RecipeLists(cookingRecords, navController)
+            RecipeLists(lazyPagingItems, navController)
         }
         composable(
             route = "recipeDetail/{index}",
             arguments = listOf(navArgument("index") { type = NavType.IntType })
         ) { backStackEntry ->
-            RecipeDetail(
-                cookingRecord = cookingRecords[backStackEntry.arguments?.getInt("index") ?: 1]
-            ) {
-                navController.navigateUp()
+            lazyPagingItems[backStackEntry.arguments?.getInt("index") ?: 1]?.let {
+                RecipeDetail(
+                    cookingRecord = it
+                ) {
+                    navController.navigateUp()
+                }
             }
         }
     }
@@ -55,7 +60,7 @@ fun RecipeListScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RecipeLists(
-    cookingRecords: List<CookingRecord>,
+    cookingRecords: LazyPagingItems<CookingRecord>,
     navController: NavController
 ) {
     Scaffold(
@@ -86,10 +91,12 @@ fun RecipeLists(
                 .padding(innerPadding)
                 .consumedWindowInsets(innerPadding)
         ) {
-            items(cookingRecords.size) { index ->
+            items(cookingRecords.itemCount) { index ->
                 val cookingRecord = cookingRecords[index]
-                RecipeListItem(cookingRecord = cookingRecord) {
-                    navController.navigate("recipeDetail/$index")
+                if (cookingRecord != null) {
+                    RecipeListItem(cookingRecord = cookingRecord) {
+                        navController.navigate("recipeDetail/$index")
+                    }
                 }
             }
         }
