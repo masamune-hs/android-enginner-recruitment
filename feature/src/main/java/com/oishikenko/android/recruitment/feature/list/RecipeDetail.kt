@@ -25,7 +25,7 @@ import com.oishikenko.android.recruitment.feature.R
 enum class RecipeType(val recipeType: String) {
     MAIN_DISH("main_dish"),
     SIDE_DISH("side_dish"),
-    SOUP("SOUP")
+    SOUP("soup")
 }
 
 @Composable
