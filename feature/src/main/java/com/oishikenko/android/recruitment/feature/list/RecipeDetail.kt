@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,7 +29,10 @@ enum class RecipeType(val recipeType: String) {
 }
 
 @Composable
-fun RecipeDetail(cookingRecord: CookingRecord) {
+fun RecipeDetail(
+    cookingRecord: CookingRecord,
+    back: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -36,8 +40,11 @@ fun RecipeDetail(cookingRecord: CookingRecord) {
                     Text(text = stringResource(id = R.string.recipe_detail_toolbar_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = back) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             )
@@ -47,7 +54,7 @@ fun RecipeDetail(cookingRecord: CookingRecord) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(360.dp)
+                    .defaultMinSize(minHeight = 360.dp)
                     .background(
                         color = colorResource(id = R.color.recorded_at_text_color)
                     )
@@ -55,18 +62,21 @@ fun RecipeDetail(cookingRecord: CookingRecord) {
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(360.dp)
                         .background(color = colorResource(id = R.color.recorded_at_text_color)),
                     model = cookingRecord.imageUrl,
+                    contentScale = ContentScale.FillWidth,
                     contentDescription = "thumbnail"
                 )
-                Image(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.BottomEnd),
-                    painter = setupRecipeTypeLabel(recipeType = cookingRecord.recipeType),
-                    contentDescription = "recipe_type"
-                )
+                val label = setupRecipeTypeLabel(recipeType = cookingRecord.recipeType)
+                if (label != null) {
+                    Image(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.BottomEnd),
+                        painter = label,
+                        contentDescription = "recipe_type"
+                    )
+                }
             }
             Text(
                 modifier = Modifier
@@ -88,12 +98,12 @@ fun RecipeDetail(cookingRecord: CookingRecord) {
 }
 
 @Composable
-fun setupRecipeTypeLabel(recipeType: String): Painter {
+fun setupRecipeTypeLabel(recipeType: String): Painter? {
     return when (recipeType) {
         RecipeType.MAIN_DISH.recipeType -> painterResource(id = R.drawable.label_main_dish)
         RecipeType.SIDE_DISH.recipeType -> painterResource(id = R.drawable.label_side_dish)
         RecipeType.SOUP.recipeType -> painterResource(id = R.drawable.label_soup)
-        else -> painterResource(id = 0)
+        else -> null
     }
 }
 
@@ -107,5 +117,5 @@ fun PreviewRecipeDetail() {
             recordedAt = "2018-04-20 14:04:42",
             recipeType = "main_dish"
         )
-    )
+    ) {}
 }
